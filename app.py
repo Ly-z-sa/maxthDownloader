@@ -140,7 +140,7 @@ def download_youtube_video(url, download_id):
         downloads[download_id]['status'] = 'Downloading video (720p max)...'
         subprocess.run([
             "yt-dlp", 
-            "--extractor-args", "youtube:player_client=ios", # This triggers the POT plugin
+            "--extractor-args", "youtube:po_token=web+MlNJt1XdNQaYCkmLsEz6rrCt2h7rfwRM8EggQNmZ0D2iKqAoO0keHHvWM6IwNC4Q399_dfBOFPFYiAiRh1TMWF9D2SmVVkArIcPZds9tHgMivsBOYw==", # This triggers the POT plugin
             url,
             "-f", "best[height<=720]",
             "-o", f"{YT_VIDEO_DIR}/Maxth Downloader - %(title)s.%(ext)s"
