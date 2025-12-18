@@ -31,6 +31,8 @@ YT_VIDEO_DIR = "project/youtube_video"
 TIKTOK_DIR = "project/tiktok"
 TWITTER_DIR = "project/twitter"
 PINTEREST_DIR = "project/pinterest"
+FACEBOOK_DIR = "project/facebook"
+INSTAGRAM_DIR = "project/instagram"
 # ==========================================
 
 os.makedirs(SPOTIFY_DIR, exist_ok=True)
@@ -39,6 +41,8 @@ os.makedirs(YT_VIDEO_DIR, exist_ok=True)
 os.makedirs(TIKTOK_DIR, exist_ok=True)
 os.makedirs(TWITTER_DIR, exist_ok=True)
 os.makedirs(PINTEREST_DIR, exist_ok=True)
+os.makedirs(FACEBOOK_DIR, exist_ok=True)
+os.makedirs(INSTAGRAM_DIR, exist_ok=True)
 
 sp = spotipy.Spotify(
     auth_manager=SpotifyClientCredentials(
@@ -65,6 +69,20 @@ def get_latest_files(directory):
         latest = max(files, key=lambda f: os.path.getctime(os.path.join(directory, f)))
         return [latest]
     return []
+
+def download_facebook(url, download_id):
+    try:
+        downloads[download_id]['status'] = 'Downloading Facebook video...'
+        subprocess.run([
+            "yt-dlp", url,
+            "-o", f"{FACEBOOK_DIR}/Maxth Downloader - %(title)s.%(ext)s"
+        ], check=True)
+        downloads[download_id]['status'] = 'completed'
+        downloads[download_id]['output_path'] = f"{FACEBOOK_DIR}/"
+        downloads[download_id]['files'] = get_latest_files(FACEBOOK_DIR)
+    except Exception as e:
+        downloads[download_id]['status'] = 'error'
+        downloads[download_id]['error'] = str(e)
 
 def download_spotify(url, download_id):
     try:
@@ -170,6 +188,20 @@ def download_pinterest(url, download_id):
         downloads[download_id]['status'] = 'error'
         downloads[download_id]['error'] = str(e)
 
+def download_instagram(url, download_id):
+    try:
+        downloads[download_id]['status'] = 'Downloading video...'
+        subprocess.run([
+            "yt-dlp", url,
+            "-o", f"{INSTAGRAM_DIR}/Maxth Downloader - %(title)s.%(ext)s"
+        ], check=True)
+        downloads[download_id]['status'] = 'completed'
+        downloads[download_id]['output_path'] = f"{INSTAGRAM_DIR}/"
+        downloads[download_id]['files'] = get_latest_files(INSTAGRAM_DIR)
+    except Exception as e:
+        downloads[download_id]['status'] = 'error'
+        downloads[download_id]['error'] = str(e)
+
 @app.route('/download', methods=['POST', 'OPTIONS'])
 def start_download():
     if request.method == 'OPTIONS':
@@ -197,7 +229,9 @@ def start_download():
         'youtube-video': download_youtube_video,
         'tiktok': download_tiktok,
         'twitter': download_twitter,
-        'pinterest': download_pinterest
+        'pinterest': download_pinterest,
+        'facebook': download_facebook,
+        'instagram': download_instagram
     }
     
     if platform in download_functions:
@@ -229,7 +263,9 @@ def download_file(platform, filename):
         'youtube-video': YT_VIDEO_DIR,
         'tiktok': TIKTOK_DIR,
         'twitter': TWITTER_DIR,
-        'pinterest': PINTEREST_DIR
+        'pinterest': PINTEREST_DIR,
+        'facebook': FACEBOOK_DIR,
+        'instagram': INSTAGRAM_DIR
     }
     
     if platform not in directories:

@@ -4,3 +4,4 @@ spotipy
 requests
 yt-dlp
 spotdl
+playwright
