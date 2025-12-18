@@ -11,8 +11,15 @@ import uuid
 from datetime import datetime
 import glob
 
-app = Flask(__name__)
-CORS(app)
+app = Flask(__name__, static_folder='.', static_url_path='')
+CORS(app, resources={r"/*": {"origins": "*", "methods": ["GET", "POST", "OPTIONS"]}})
+
+@app.route('/')
+def serve_index():
+    try:
+        return send_file('index.html')
+    except FileNotFoundError:
+        return '<h1>Maxth Downloader</h1><p>index.html not found in current directory</p>', 404
 
 # ================= CONFIG =================
 CLIENT_ID = "3d3a936ca2d74fc5bacb2bc14fa0f7b0"
@@ -147,8 +154,11 @@ def download_twitter(url, download_id):
         downloads[download_id]['status'] = 'error'
         downloads[download_id]['error'] = str(e)
 
-@app.route('/download', methods=['POST'])
+@app.route('/download', methods=['POST', 'OPTIONS'])
 def start_download():
+    if request.method == 'OPTIONS':
+        return '', 200
+        
     data = request.json
     url = data.get('url')
     platform = data.get('platform')
@@ -183,15 +193,19 @@ def start_download():
     else:
         return jsonify({'error': 'Invalid platform'}), 400
 
-@app.route('/status/<download_id>')
+@app.route('/status/<download_id>', methods=['GET', 'OPTIONS'])
 def get_status(download_id):
+    if request.method == 'OPTIONS':
+        return '', 200
     if download_id in downloads:
         return jsonify(downloads[download_id])
     else:
         return jsonify({'error': 'Download not found'}), 404
 
-@app.route('/download-file/<platform>/<filename>')
+@app.route('/download-file/<platform>/<filename>', methods=['GET', 'OPTIONS'])
 def download_file(platform, filename):
+    if request.method == 'OPTIONS':
+        return '', 200
     directories = {
         'spotify': SPOTIFY_DIR,
         'youtube-audio': YT_AUDIO_DIR,
@@ -213,3 +227,4 @@ if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(debug=True, host='0.0.0.0', port=port)
     print(f'Maxth Downloader running on port {port}')
+    print(f'Visit: http://localhost:{port}')
