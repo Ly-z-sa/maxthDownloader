@@ -55,7 +55,7 @@ class MediaDownloader {
             'youtube-video': 'https://www.youtube.com/watch?v=...',
             'tiktok': 'https://www.tiktok.com/@user/video/...',
             'twitter': 'https://twitter.com/user/status/...',
-            'pinterest': 'https://www.pinterest.com/pin/...'
+            'pinterest': 'https://pin.it/...'
         };
         document.getElementById('urlInput').placeholder = placeholders[platform];
     }
@@ -93,7 +93,7 @@ class MediaDownloader {
             'youtube-video': /youtube\.com\/watch|youtu\.be\//,
             'tiktok': /tiktok\.com/,
             'twitter': /twitter\.com|x\.com/,
-            'pinterest': /pinterest\.com\/pin\//
+            'pinterest': /pinterest\.com\/pin\/|pin\.it\//
         };
         return patterns[this.currentPlatform]?.test(url) || false;
     }
