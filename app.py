@@ -120,10 +120,13 @@ def download_youtube_audio(url, download_id):
     try:
         downloads[download_id]['status'] = 'Downloading audio...'
         subprocess.run([
-            "yt-dlp", url,
+            "yt-dlp", 
+            "--extractor-args", "youtube:player_client=ios", # This triggers the POT plugin
+            url,
             "-f", "bestaudio[ext=m4a]/bestaudio[ext=mp3]/bestaudio",
             "-o", f"{YT_AUDIO_DIR}/Maxth Downloader - %(title)s.%(ext)s"
         ], check=True)
+        
         downloads[download_id]['status'] = 'completed'
         downloads[download_id]['output_path'] = f"{YT_AUDIO_DIR}/"
         downloads[download_id]['files'] = get_latest_files(YT_AUDIO_DIR)
@@ -135,10 +138,13 @@ def download_youtube_video(url, download_id):
     try:
         downloads[download_id]['status'] = 'Downloading video (720p max)...'
         subprocess.run([
-            "yt-dlp", url,
+            "yt-dlp", 
+            "--extractor-args", "youtube:player_client=ios", # This triggers the POT plugin
+            url,
             "-f", "best[height<=720]",
             "-o", f"{YT_VIDEO_DIR}/Maxth Downloader - %(title)s.%(ext)s"
         ], check=True)
+        
         downloads[download_id]['status'] = 'completed'
         downloads[download_id]['output_path'] = f"{YT_VIDEO_DIR}/"
         downloads[download_id]['files'] = get_latest_files(YT_VIDEO_DIR)

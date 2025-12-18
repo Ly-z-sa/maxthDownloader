@@ -3,5 +3,6 @@ flask-cors
 spotipy
 requests
 yt-dlp
+yt-dlp-get-pot
 spotdl
 playwright
