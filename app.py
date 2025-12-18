@@ -120,12 +120,13 @@ def download_youtube_audio(url, download_id):
     try:
         downloads[download_id]['status'] = 'Downloading audio...'
         subprocess.run([
-            "yt-dlp", 
-            "--extractor-args", "youtube:player_client=ios", # This triggers the POT plugin
-            url,
-            "-f", "bestaudio[ext=m4a]/bestaudio[ext=mp3]/bestaudio",
-            "-o", f"{YT_AUDIO_DIR}/Maxth Downloader - %(title)s.%(ext)s"
-        ], check=True)
+        "yt-dlp", 
+        # Added 'web+' prefix and removed the trailing space
+        "--extractor-args", "youtube:po_token=web+MlNJt1XdNQaYCkmLsEz6rrCt2h7rfwRM8EggQNmZ0D2iKqAoO0keHHvWM6IwNC4Q399_dfBOFPFYiAiRh1TMWF9D2SmVVkArIcPZds9tHgMivsBOYw==", 
+        url,
+        "-f", "bestaudio[ext=m4a]/bestaudio[ext=mp3]/bestaudio",
+        "-o", f"{YT_AUDIO_DIR}/Maxth Downloader - %(title)s.%(ext)s"
+    ], check=True)
         
         downloads[download_id]['status'] = 'completed'
         downloads[download_id]['output_path'] = f"{YT_AUDIO_DIR}/"
