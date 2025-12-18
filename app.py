@@ -30,6 +30,7 @@ YT_AUDIO_DIR = "project/youtube_audio"
 YT_VIDEO_DIR = "project/youtube_video"
 TIKTOK_DIR = "project/tiktok"
 TWITTER_DIR = "project/twitter"
+PINTEREST_DIR = "project/pinterest"
 # ==========================================
 
 os.makedirs(SPOTIFY_DIR, exist_ok=True)
@@ -37,6 +38,7 @@ os.makedirs(YT_AUDIO_DIR, exist_ok=True)
 os.makedirs(YT_VIDEO_DIR, exist_ok=True)
 os.makedirs(TIKTOK_DIR, exist_ok=True)
 os.makedirs(TWITTER_DIR, exist_ok=True)
+os.makedirs(PINTEREST_DIR, exist_ok=True)
 
 sp = spotipy.Spotify(
     auth_manager=SpotifyClientCredentials(
@@ -154,6 +156,20 @@ def download_twitter(url, download_id):
         downloads[download_id]['status'] = 'error'
         downloads[download_id]['error'] = str(e)
 
+def download_pinterest(url, download_id):
+    try:
+        downloads[download_id]['status'] = 'Downloading video...'
+        subprocess.run([
+            "yt-dlp", url,
+            "-o", f"{PINTEREST_DIR}/Maxth Downloader - %(title)s.%(ext)s"
+        ], check=True)
+        downloads[download_id]['status'] = 'completed'
+        downloads[download_id]['output_path'] = f"{PINTEREST_DIR}/"
+        downloads[download_id]['files'] = get_latest_files(PINTEREST_DIR)
+    except Exception as e:
+        downloads[download_id]['status'] = 'error'
+        downloads[download_id]['error'] = str(e)
+
 @app.route('/download', methods=['POST', 'OPTIONS'])
 def start_download():
     if request.method == 'OPTIONS':
@@ -180,7 +196,8 @@ def start_download():
         'youtube-audio': download_youtube_audio,
         'youtube-video': download_youtube_video,
         'tiktok': download_tiktok,
-        'twitter': download_twitter
+        'twitter': download_twitter,
+        'pinterest': download_pinterest
     }
     
     if platform in download_functions:
@@ -211,7 +228,8 @@ def download_file(platform, filename):
         'youtube-audio': YT_AUDIO_DIR,
         'youtube-video': YT_VIDEO_DIR,
         'tiktok': TIKTOK_DIR,
-        'twitter': TWITTER_DIR
+        'twitter': TWITTER_DIR,
+        'pinterest': PINTEREST_DIR
     }
     
     if platform not in directories:
